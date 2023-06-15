@@ -1,26 +1,23 @@
-version: "3"
+version: '3'
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9003:9000"
+      - 9003:9003
     volumes:
       - .:/var/www/html
-    environment:
-      - DB_CONNECTION=pgsql
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_DATABASE=laravel
-      - DB_USERNAME=laravel
-      - DB_PASSWORD=password
+    depends_on:
+      - db
   db:
     image: postgres
-    restart: always
+    ports:
+      - 5432:5432
     environment:
-      POSTGRES_DB: laravel
-      POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: password
+      - POSTGRES_USER=RuanFelipe
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=appliance
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./pg_hba.conf:/etc/postgresql/13/main/pg_hba.conf
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

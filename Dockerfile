@@ -1,34 +1,33 @@
-# Imagem base
+# Imagem base do PHP 8.1
 FROM php:8.1-fpm
 
-# Instalação das dependências
+# Instala as dependências necessárias
 RUN apt-get update && apt-get install -y \
     libpq-dev \
-    libonig-dev \
-    libxml2-dev \
-    unzip \
-    vim
+    libzip-dev \
+    zip \
+    && docker-php-ext-install pdo pdo_pgsql zip
 
-# Instalação das extensões do PHP
-RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath
-
-# Instalação do Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-
-# Diretório de trabalho
+# Define o diretório de trabalho
 WORKDIR /var/www/html
 
-# Cópia do código do projeto Laravel
+# Copia os arquivos do projeto para o contêiner
 COPY . /var/www/html
 
-# Permissões
-RUN chmod -R 775 ./
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-RUN chmod -R 775 /var/www/html/storage
+# Instala as dependências do Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Definição do usuário www-data
-USER www-data
+# Executa o comando 'composer install' para instalar as dependências do projeto
+RUN composer install
 
-# Inicialização do servidor PHP-FPM
+# Copia o arquivo de configuração do PostgreSQL para o local correto
+COPY pg_hba.conf /etc/postgresql/13/main/pg_hba.conf
+
+# Copia o script SQL para a inicialização do banco de dados
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Expõe a porta 9003
+EXPOSE 9003
+
+# Inicia o servidor PHP-FPM
 CMD ["php-fpm"]
