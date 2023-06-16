@@ -26,6 +26,7 @@ Route::delete('/applianceBrand/{id}', [BrandController::class, 'deleteBrand']);
 
 Route::get('/applianceProduct', [ProductController::class, 'getProductAll']);
 Route::get('/applianceProduct/{id}', [ProductController::class, 'getProductOne']);
+Route::get('/applianceProductOfBrand/{id}', [ProductController::class, 'getProductOfBrand']);
 Route::post('/applianceProductCreate', [ProductController::class, 'createProduct']);
 Route::put('/applianceProduct/{id}', [ProductController::class, 'editProduct']);
 Route::delete('/applianceProduct/{id}', [ProductController::class, 'deleteProduct']);

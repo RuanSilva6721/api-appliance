@@ -20,6 +20,18 @@ class ProductRepository
             return Product::find($id);
          });
     }
+    public function getProductOfBrand($id)
+    {
+        return  DB::transaction(function () use($id) {
+            $products = Product::join('brands', 'products.brand_id', '=', 'brands.id')
+            ->where('brands.id', $id)
+            ->select('products.*')
+            ->get();
+
+            return $products;
+         });
+    }
+    
     public function createProduct($user)
     {
         return  DB::transaction(function () use($user) {

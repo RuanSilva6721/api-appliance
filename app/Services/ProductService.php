@@ -18,6 +18,11 @@ class ProductService
     {
         return $this->productRepository->getProductOne($id);
     }
+    public function getProductOfBrand($id)
+    {
+        return $this->productRepository->getProductOfBrand($id);
+    }
+    
     public function createProduct($request)
     {
         $user = $request->all();

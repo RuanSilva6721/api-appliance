@@ -47,6 +47,19 @@ class ProductController extends Controller
             ], 500);
         }
     }
+    public function getProductOfBrand($id)
+    {
+        try {
+            return $this->productService->getProductOfBrand($id);
+        } catch (Exception $e) {
+            $this->logError($e);
+            return new JsonResponse([
+                'error' => true,
+                'message' => 'Ocorreu um erro ao obter o produtos.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function createProduct(Request $request)
     {
         try {
