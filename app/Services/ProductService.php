@@ -10,26 +10,26 @@ class ProductService
     public function __construct(ProductRepository $productRepository){
         $this->productRepository = $productRepository;
     }
-    public function getproductAll()
+    public function getProductAll()
     {
-        return $this->productRepository->getproductAll();
+        return $this->productRepository->getProductAll();
     }
-    public function getproductOne($id)
+    public function getProductOne($id)
     {
-        return $this->productRepository->getproductOne($id);
+        return $this->productRepository->getProductOne($id);
     }
-    public function createproduct($request)
+    public function createProduct($request)
     {
         $user = $request->all();
-        return $this->productRepository->createproduct($user);
+        return $this->productRepository->createProduct($user);
     }
-    public function editproduct($id, $request)
+    public function editProduct($id, $request)
     {
         $user = $request->all();
-        return $this->productRepository->editproduct($id, $user);
+        return $this->productRepository->editProduct($id, $user);
     }
-    public function deleteproduct($id)
+    public function deleteProduct($id)
     {
-        return $this->productRepository->deleteproduct($id);
+        return $this->productRepository->deleteProduct($id);
     }
 }

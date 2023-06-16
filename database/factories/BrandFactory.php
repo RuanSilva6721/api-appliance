@@ -29,7 +29,6 @@ class BrandFactory extends Factory
                 "Miele",
                 "Haier",
               ]),
-            'description' => $this->faker->sentence,
             'icon' => $this->faker->randomElement([
                 "live_tv",
                 "movie",

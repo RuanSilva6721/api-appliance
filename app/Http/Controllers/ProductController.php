@@ -19,7 +19,7 @@ class ProductController extends Controller
         $this->logger = $logger;
     }
 
-    public function getproductAll()
+    public function getProductAll()
     {
         try {
             $products = $this->productService->getProductAll();
@@ -34,10 +34,10 @@ class ProductController extends Controller
         }
     }
 
-    public function getproductOne($id)
+    public function getProductOne($id)
     {
         try {
-            return $this->productService->getproductOne($id);
+            return $this->productService->getProductOne($id);
         } catch (Exception $e) {
             $this->logError($e);
             return new JsonResponse([
@@ -72,10 +72,10 @@ class ProductController extends Controller
         }
     }
 
-    public function editproduct($id, Request $request)
+    public function editProduct($id, Request $request)
     {
         try {
-            $result = $this->productService->editproduct($id, $request);
+            $result = $this->productService->editProduct($id, $request);
             if ($result) {
                 return new JsonResponse([
                     'success' => true,
@@ -97,10 +97,10 @@ class ProductController extends Controller
         }
     }
 
-    public function deleteproduct($id)
+    public function deleteProduct($id)
     {
         try {
-            $result = $this->productService->deleteproduct($id);
+            $result = $this->productService->deleteProduct($id);
             if ($result) {
                 return new JsonResponse([
                     'success' => true,
