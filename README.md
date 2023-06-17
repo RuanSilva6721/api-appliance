@@ -107,7 +107,7 @@ DB_PASSWORD=password
 
 
 
-Para acessar o container da aplicação, execute:
+Para subir o container da aplicação e o db postgres, execute:
 
 ```bash
 
@@ -138,5 +138,20 @@ php artisan test
 ```
 
 
+## Rotas
+
+A API disponibiliza as seguintes rotas:
+
+- `GET /applianceBrand`: Retorna a lista de todas as marcas de eletrodomésticos cadastradas. 
+- `GET /applianceBrand/{id}`: Retorna os detalhes de uma marca de eletrodoméstico específica. 
+- `POST /applianceBrandCreate`: Cria um novo registro de marca de eletrodoméstico. 
+- `PUT /applianceBrand/{id}`: Atualiza uma marca de eletrodoméstico existente. 
+- `DELETE /applianceBrand/{id}`: Remove uma marca de eletrodoméstico existente. 
+- `GET /applianceProduct`: Retorna a lista de todos os produtos de eletrodomésticos cadastrados. 
+- `GET /applianceProduct/{id}`: Retorna os detalhes de um produto de eletrodoméstico específico. 
+- `GET /applianceProductOfBrand/{id}`: Retorna os produtos de eletrodomésticos de uma determinada marca. 
+- `POST /applianceProductCreate`: Cria um novo registro de produto de eletrodoméstico. 
+- `PUT /applianceProduct/{id}`: Atualiza um produto de eletrodoméstico existente. 
+- `DELETE /applianceProduct/{id}`: Remove um produto de eletrodoméstico existente.
 ## Construído com 
 - [Laravel](https://laravel.com/)
