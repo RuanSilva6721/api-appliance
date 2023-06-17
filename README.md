@@ -111,9 +111,14 @@ Para acessar o container da aplicação, execute:
 
 ```bash
 
-docker-compose exec [container da aplicação] bash
+docker-compose exec -it [container da aplicação] bash
 ```
+Execute o comando abaixo para que as tabelas sejam criadas no banco de dados:
 
+```bash
+
+php artisan migrate
+```
 
 
 Caso queira adicionar dados fictícios para o seu usuário no banco:
