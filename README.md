@@ -82,7 +82,7 @@ php artisan test
 
 **Caso queira rodar em Docker, utilize o comando:** 
 
-Inicie o Docker em sua máquina e depois execute:
+Inicie o Docker em sua máquina e depois execute para subir o container da aplicação e subir o db postgres:
 
 ```bash
 
@@ -107,7 +107,7 @@ DB_PASSWORD=password
 
 
 
-Para subir o container da aplicação e o db postgres, execute:
+Para acessar o container da aplicação, execute:
 
 ```bash
 
