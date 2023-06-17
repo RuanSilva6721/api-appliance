@@ -29,5 +29,4 @@ COPY init.sql /docker-entrypoint-initdb.d/
 # Expõe a porta 9003
 EXPOSE 9003
 
-# Inicia o servidor PHP-FPM
-CMD ["php-fpm"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9003"]
