@@ -153,5 +153,31 @@ A API disponibiliza as seguintes rotas:
 - `POST /applianceProductCreate`: Cria um novo registro de produto de eletrodoméstico. 
 - `PUT /applianceProduct/{id}`: Atualiza um produto de eletrodoméstico existente. 
 - `DELETE /applianceProduct/{id}`: Remove um produto de eletrodoméstico existente.
+
+## Exemplo de Payload de Product
+
+```json
+{
+    "id": 4,
+    "name": "accusamus",
+    "description": "Sequi et in est beatae.",
+    "voltage": "110v",
+    "brand_id": 2,
+    "created_at": "2023-06-17T01:13:32.000000Z",
+    "updated_at": "2023-06-17T01:13:32.000000Z"
+}
+```
+
+## Exemplo de Payload de Brand
+
+```json
+{
+    "id": 4,
+    "name": "Philips",
+    "icon": "movie",
+    "created_at": "2023-06-17T01:13:06.000000Z",
+    "updated_at": "2023-06-17T01:13:06.000000Z"
+}
+```
 ## Construído com 
 - [Laravel](https://laravel.com/)
