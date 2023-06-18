@@ -90,11 +90,6 @@ Inicie o Docker em sua máquina e depois execute para subir o container da aplic
 cd docker-compose up -d
 ```
 
-Instale as dependências com os comandos abaixo:
-
-```bash
-composer install
-```
 
 
 Para ver o projeto em execução, acesse [http://localhost:9003](http://localhost:9003/) .
@@ -120,6 +115,11 @@ Para acessar o container da aplicação, execute:
 docker-compose exec -it [container da aplicação] bash
 ```
 
+Instale as dependências com os comandos abaixo:
+
+```bash
+composer install
+```
 
 Execute o comando abaixo para que as tabelas sejam criadas no banco de dados:
 
