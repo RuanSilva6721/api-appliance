@@ -43,13 +43,6 @@ php artisan key:generate
 Altere as configurações no arquivo `.env` para que o projeto se conecte ao banco de dados.
 
 
-Instale o composer:
-
-```bash
-
-composer install
-```
-
 Execute o comando abaixo para que as tabelas sejam criadas no banco de dados:
 
 ```bash
@@ -122,12 +115,6 @@ Para acessar o container da aplicação, execute:
 docker-compose exec -it [container da aplicação] bash
 ```
 
-Instale o composer:
-
-```bash
-
-composer install
-```
 
 Execute o comando abaixo para que as tabelas sejam criadas no banco de dados:
 
