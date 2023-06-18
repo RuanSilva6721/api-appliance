@@ -53,7 +53,7 @@ class BrandController extends Controller
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Marca criada com sucesso.'
-                ]);
+                ], 201);
             } else {
                 return new JsonResponse([
                     'error' => true,
@@ -78,7 +78,7 @@ class BrandController extends Controller
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Marca editada com sucesso.'
-                ]);
+                ], 200);
             } else {
                 return new JsonResponse([
                     'error' => true,
@@ -103,7 +103,7 @@ class BrandController extends Controller
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Marca excluída com sucesso.'
-                ]);
+                ], 204);
             } else {
                 return new JsonResponse([
                     'error' => true,
