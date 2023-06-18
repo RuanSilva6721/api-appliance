@@ -72,7 +72,7 @@ php artisan db:seed --class=BrandSeeder & php artisan db:seed --class=ProductSee
 
 
 
-Caso queira fazer testes unitários:
+Caso queira fazer testes unitário e de integração:
 
 ```bash
 
@@ -133,7 +133,7 @@ php artisan db:seed --class=BrandSeeder & php artisan db:seed --class=ProductSee
 
 
 
-Caso queira fazer testes unitários:
+Caso queira fazer testes unitários e de integração:
 
 ```bash
 
