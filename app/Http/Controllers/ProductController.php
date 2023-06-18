@@ -68,7 +68,7 @@ class ProductController extends Controller
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Produto criado com sucesso.'
-                ]);
+                ],201);
             } else {
                 return new JsonResponse([
                     'error' => true,
@@ -118,7 +118,7 @@ class ProductController extends Controller
                 return new JsonResponse([
                     'success' => true,
                     'message' => 'Produto excluído com sucesso.'
-                ]);
+                ], 204);
             } else {
                 return new JsonResponse([
                     'error' => true,

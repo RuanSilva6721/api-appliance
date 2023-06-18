@@ -1,398 +1,117 @@
 <?php
 
-use App\Http\Controllers\ProductController;
-use App\Services\ProductService;
-use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Psr\Log\LoggerInterface;
-use PHPUnit\Framework\TestCase;
+use App\Models\Brand;
+use App\Models\Product;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
 
 class ProductTest extends TestCase
 {
-    public function testGetProductAll_Success()
+    protected string $endpoint = '/api/applianceProduct';
+
+    use RefreshDatabase;
+
+
+    public function test_create_product()
     {
-        // Arrange
-        $products = ['product1', 'product2'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductAll')
-            ->willReturn($products);
+        Brand::factory(10)->create();
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
+        $brand =Brand::first();
+        $payload = [
+            'name' => 'accusamus',
+            'description' => 'Sequi et in est beatae.',
+            'voltage' => '110v',
+            'brand_id' => $brand->id,
+        ];
 
-        // Act
-        $response = $controller->getProductAll();
+        $response = $this->postJson($this->endpoint.'Create', $payload);
 
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($products, $response->getData());
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
-    public function testGetProductAll_Exception()
+    public function test_find()
     {
-        // Arrange
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductAll')
-            ->willThrowException(new Exception($errorMessage));
+        Brand::factory(10)->create();
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
+        $product = Product::factory()->create();
 
-        // Act
-        $response = $controller->getProductAll();
+        $response = $this->getJson("{$this->endpoint}/{$product->id}");
 
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao obter os produtos.',
-            'details' => $errorMessage
-        ], $response->getData());
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJsonStructure([
+    
+                'id',
+                'name',
+                'description',
+                'voltage',
+                'brand_id',
+                'created_at',
+                'updated_at'
+            
+        ]);
     }
 
-    public function testGetProductOne_Success()
+    public function test_find_not_found()
     {
-        // Arrange
-        $id = 1;
-        $product = ['id' => 1, 'name' => 'Product 1'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductOne')
-            ->with($id)
-            ->willReturn($product);
+        $response = $this->getJson("{$this->endpoint}/fake_id");
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->getProductOne($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($product, $response->getData());
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function testGetProductOne_Exception()
+    public function test_update()
     {
-        // Arrange
-        $id = 1;
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductOne')
-            ->with($id)
-            ->willThrowException(new Exception($errorMessage));
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
+        DB::beginTransaction();
+         Brand::factory(10)->create();
 
-        // Act
-        $response = $controller->getProductOne($id);
+        try {
+            $product = Product::factory()->create();
 
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao obter o produto.',
-            'details' => $errorMessage
-        ], $response->getData());
+            $payload = [
+                'name' => 'Updated Product',
+                'description' => 'This is the updated product',
+                'voltage' => '220v',
+                'brand_id' => $product->brand_id
+            ];
+
+            $response = $this->putJson("{$this->endpoint}/{$product->id}", $payload);
+
+            $response->assertStatus(Response::HTTP_OK);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
-    public function testGetProductOfBrand_Success()
+    public function test_update_not_found()
     {
-        // Arrange
-        $id = 1;
-        $products = ['product1', 'product2'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductOfBrand')
-            ->with($id)
-            ->willReturn($products);
+        $response = $this->putJson("{$this->endpoint}/fake_id", [
+            'name' => 'Updated Product'
+        ]);
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->getProductOfBrand($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($products, $response->getData());
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function testGetProductOfBrand_Exception()
+    public function test_delete_not_found()
     {
-        // Arrange
-        $id = 1;
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('getProductOfBrand')
-            ->with($id)
-            ->willThrowException(new Exception($errorMessage));
+        $response = $this->deleteJson("{$this->endpoint}/fake_id");
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->getProductOfBrand($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao obter o produtos.',
-            'details' => $errorMessage
-        ], $response->getData());
+        $response->assertStatus(Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    public function testCreateProduct_Success()
+    public function test_delete()
     {
-        // Arrange
-        $requestData = ['name' => 'Product 1'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('createProduct')
-            ->with($requestData)
-            ->willReturn(true);
+        Brand::factory(10)->create();
+        $product = Product::factory()->create();
 
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
+        $response = $this->deleteJson("{$this->endpoint}/{$product->id}");
 
-        // Act
-        $request = Request::create('/products', 'POST', $requestData);
-        $response = $controller->createProduct($request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals([
-            'success' => true,
-            'message' => 'Produto criado com sucesso.'
-        ], $response->getData());
-    }
-
-    public function testCreateProduct_Failure()
-    {
-        // Arrange
-        $requestData = ['name' => 'Product 1'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('createProduct')
-            ->with($requestData)
-            ->willReturn(false);
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $request = Request::create('/products', 'POST', $requestData);
-        $response = $controller->createProduct($request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Não foi possível criar o produto.'
-        ], $response->getData());
-    }
-
-    public function testCreateProduct_Exception()
-    {
-        // Arrange
-        $requestData = ['name' => 'Product 1'];
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('createProduct')
-            ->with($requestData)
-            ->willThrowException(new Exception($errorMessage));
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $request = Request::create('/products', 'POST', $requestData);
-        $response = $controller->createProduct($request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao criar o produto.',
-            'details' => $errorMessage
-        ], $response->getData());
-    }
-
-    public function testEditProduct_Success()
-    {
-        // Arrange
-        $id = 1;
-        $requestData = ['name' => 'Product 1'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('editProduct')
-            ->with($id, $requestData)
-            ->willReturn(true);
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $request = Request::create("/products/{$id}", 'PUT', $requestData);
-        $response = $controller->editProduct($id, $request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals([
-            'success' => true,
-            'message' => 'Produto editado com sucesso.'
-        ], $response->getData());
-    }
-
-    public function testEditProduct_NotFound()
-    {
-        // Arrange
-        $id = 1;
-        $requestData = ['name' => 'Product 1'];
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('editProduct')
-            ->with($id, $requestData)
-            ->willReturn(false);
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $request = Request::create("/products/{$id}", 'PUT', $requestData);
-        $response = $controller->editProduct($id, $request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(404, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Não foi possível encontrar o produto para edição.'
-        ], $response->getData());
-    }
-
-    public function testEditProduct_Exception()
-    {
-        // Arrange
-        $id = 1;
-        $requestData = ['name' => 'Product 1'];
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('editProduct')
-            ->with($id, $requestData)
-            ->willThrowException(new Exception($errorMessage));
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $request = Request::create("/products/{$id}", 'PUT', $requestData);
-        $response = $controller->editProduct($id, $request);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao editar o produto.',
-            'details' => $errorMessage
-        ], $response->getData());
-    }
-
-    public function testDeleteProduct_Success()
-    {
-        // Arrange
-        $id = 1;
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('deleteProduct')
-            ->with($id)
-            ->willReturn(true);
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->deleteProduct($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals([
-            'success' => true,
-            'message' => 'Produto deletado com sucesso.'
-        ], $response->getData());
-    }
-
-    public function testDeleteProduct_NotFound()
-    {
-        // Arrange
-        $id = 1;
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('deleteProduct')
-            ->with($id)
-            ->willReturn(false);
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->deleteProduct($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(404, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Não foi possível encontrar o produto para exclusão.'
-        ], $response->getData());
-    }
-
-    public function testDeleteProduct_Exception()
-    {
-        // Arrange
-        $id = 1;
-        $errorMessage = 'Error message';
-        $productServiceMock = $this->createMock(ProductService::class);
-        $productServiceMock->expects($this->once())
-            ->method('deleteProduct')
-            ->with($id)
-            ->willThrowException(new Exception($errorMessage));
-
-        $loggerMock = $this->createMock(LoggerInterface::class);
-        $controller = new ProductController($productServiceMock, $loggerMock);
-
-        // Act
-        $response = $controller->deleteProduct($id);
-
-        // Assert
-        $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals([
-            'error' => true,
-            'message' => 'Ocorreu um erro ao excluir o produto.',
-            'details' => $errorMessage
-        ], $response->getData());
+        $response->assertNoContent();
     }
 }
