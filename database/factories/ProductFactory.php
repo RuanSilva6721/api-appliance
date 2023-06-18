@@ -18,12 +18,14 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $brand =Brand::first();
+        $brandFirst =Brand::first();
+        $brandLast =Brand::orderBy('id', 'desc')->first();
+
         return [
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
             'voltage' => Arr::random(['110v', '220v']),
-            'brand_id' => $brand->id
+            'brand_id' => $this->faker->numberBetween($brandFirst->id, $brandLast->id)
         ];
     }
 }
