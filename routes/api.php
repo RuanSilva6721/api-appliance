@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('auth:sanctum')->get('/users', function(Request $request){
+    return $request->user();
+});
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 Route::get('/applianceBrand', [BrandController::class, 'getBrandAll']);
 Route::get('/applianceBrand/{id}', [BrandController::class, 'getBrandOne']);
