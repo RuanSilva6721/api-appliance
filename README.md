@@ -90,6 +90,17 @@ Inicie o Docker em sua máquina e depois execute para subir o container da aplic
 cd docker-compose up -d
 ```
 
+Veja se o container da aplicação e o db postgres estão de pé:
+
+```bash
+
+docker ps
+```
+Caso não, execute:
+
+```bash
+
+docker-compose restart
 
 
 Para ver o projeto em execução, acesse [http://localhost:9003](http://localhost:9003/) .

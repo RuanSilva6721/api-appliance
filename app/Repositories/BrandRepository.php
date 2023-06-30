@@ -5,36 +5,12 @@ use App\Models\Brand;
 use Illuminate\Support\Facades\DB;
 
 
-class BrandRepository
+interface BrandRepository
 {
 
-    public function getBrandAll()
-    {
-
-        return Brand::orderBy('name')->get();;
-    }
-    public function getBrandOne($id)
-    {
-        return Brand::find($id);
-
-    }
-    public function createBrand($user)
-    {
-        $brand = new Brand();
-        return $brand->create($user);
-    }
-    public function editBrand($id, $user)
-    {
-        return  DB::transaction(function () use($id, $user) {
-             $brand = Brand::find($id);
-             return $brand->update($user);
-         });
-    }
-    public function deleteBrand($id)
-    {
-        return  DB::transaction(function () use($id) {
-            $brand = Brand::find($id);
-            return $brand->delete();
-        });
-    }
+    public function getBrandAll();
+    public function getBrandOne($id);
+    public function createBrand($user);
+    public function editBrand($id, $user);
+    public function deleteBrand($id);
 }
