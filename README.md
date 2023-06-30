@@ -101,7 +101,7 @@ Caso não, execute:
 ```bash
 
 docker-compose restart
-
+```
 
 Para ver o projeto em execução, acesse [http://localhost:9003](http://localhost:9003/) .
 
