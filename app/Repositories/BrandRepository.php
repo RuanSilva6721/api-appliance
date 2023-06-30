@@ -10,22 +10,18 @@ class BrandRepository
 
     public function getBrandAll()
     {
-        return  DB::transaction(function () {
-            return Brand::orderBy('name')->get();;
-         });
+
+        return Brand::orderBy('name')->get();;
     }
     public function getBrandOne($id)
     {
-        return  DB::transaction(function () use($id) {
-            return Brand::find($id);
-         });
+        return Brand::find($id);
+
     }
     public function createBrand($user)
     {
-        return  DB::transaction(function () use($user) {
-             $brand = new Brand();
-             return $brand->create($user);
-         });
+        $brand = new Brand();
+        return $brand->create($user);
     }
     public function editBrand($id, $user)
     {

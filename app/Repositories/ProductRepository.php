@@ -10,26 +10,24 @@ class ProductRepository
 
     public function getProductAll()
     {
-        return  DB::transaction(function () {
-            return Product::orderBy('name')->get();;
-         });
+
+        return Product::orderBy('name')->get();;
     }
     public function getProductOne($id)
     {
-        return  DB::transaction(function () use($id) {
-            return Product::find($id);
-         });
+
+        return Product::find($id);
     }
     public function getProductOfBrand($id)
     {
-        return  DB::transaction(function () use($id) {
-            $products = Product::join('brands', 'products.brand_id', '=', 'brands.id')
-            ->where('brands.id', $id)
-            ->select('products.*')
-            ->get();
 
-            return $products;
-         });
+        $products = Product::join('brands', 'products.brand_id', '=', 'brands.id')
+        ->where('brands.id', $id)
+        ->select('products.*')
+        ->get();
+
+        return $products;
+
     }
     
     public function createProduct($user)
